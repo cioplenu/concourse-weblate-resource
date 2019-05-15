@@ -1,0 +1,36 @@
+#!/usr/local/bin/python
+"""This validates the source config for weblate an tries to ping the server.
+For a version it returns the timestamp that was provided or 'none'"""
+
+# Inspired by: https://github.com/cloudfoundry-community/slack-notification-resource
+# to implement the concourse specs fully
+
+import sys
+import json
+import subprocess
+
+PAYLOAD = json.loads(sys.stdin.read())
+
+try:
+    URL = PAYLOAD["source"]["url"]
+    KEY = PAYLOAD["source"]["key"]
+    TRANSLATION = PAYLOAD["source"]["translation"]
+except KeyError:
+    print("Please provide a url, key and translation for weblate resource")
+    exit(1)
+
+try:
+    subprocess.run(["wlc", "--url", URL, "--key", KEY, "--format", "json", "show", TRANSLATION],
+                   stdout=sys.stderr,
+                   check=True)
+except subprocess.CalledProcessError:
+    print("Could not ping the weblate server with the credentials provided")
+    exit(1)
+
+try:
+    TIMESTAMP = PAYLOAD["version"]["timestamp"]
+except KeyError:
+    TIMESTAMP = "none"
+
+
+print(json.dumps([{"timestamp":TIMESTAMP}], sort_keys=True, indent=2))
