@@ -16,7 +16,7 @@ try:
     TRANSLATION = PAYLOAD["source"]["translation"]
 except KeyError:
     print("Please provide a url, key and translation for weblate resource")
-    exit(1)
+    sys.exit(1)
 
 try:
     TIMESTAMP = PAYLOAD["version"]["timestamp"]
