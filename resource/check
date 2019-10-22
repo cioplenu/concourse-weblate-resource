@@ -26,4 +26,4 @@ except KeyError:
     TIMESTAMP = "none"
 
 
-print(json.dumps([{"timestamp":TIMESTAMP}], sort_keys=True, indent=2))
+print(json.dumps([{"timestamp": TIMESTAMP}], sort_keys=True, indent=2))
