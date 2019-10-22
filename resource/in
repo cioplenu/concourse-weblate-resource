@@ -1,0 +1,17 @@
+#!/usr/local/bin/python
+"""This is a no-op that returns the timestamp provided or 'none'"""
+
+# Inspired by: https://github.com/cloudfoundry-community/slack-notification-resource
+# to implement the concourse specs fully
+
+import sys
+import json
+
+PAYLOAD = json.loads(sys.stdin.read())
+
+try:
+    TIMESTAMP = PAYLOAD['version']['timestamp']
+except KeyError:
+    TIMESTAMP = 'none'
+
+print(json.dumps({'version':{'timestamp': TIMESTAMP}}, sort_keys=True, indent=2))

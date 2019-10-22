@@ -1,0 +1,44 @@
+#!/usr/local/bin/python
+"""Executes one of the allowed commands on the weblate server.
+As a version just the provided timestamp or 'none' is returned"""
+
+import sys
+import json
+import subprocess
+
+PAYLOAD = json.loads(sys.stdin.read())
+
+try:
+    URL = PAYLOAD["source"]["url"]
+    KEY = PAYLOAD["source"]["key"]
+    TRANSLATION = PAYLOAD["source"]["translation"]
+except KeyError:
+    print("Please provide a url, key and translation for weblate resource")
+    exit(1)
+
+try:
+    COMMAND = PAYLOAD["params"]["command"]
+except KeyError:
+    print("Please provide a command as a parameter")
+    exit(1)
+
+ALLOWED_COMMANDS = ["lock", "unlock", "cleanup", "pull", "push", "reset", "commit"]
+if COMMAND not in ALLOWED_COMMANDS:
+    print("Only the following actions are allowed: " + str(ALLOWED_COMMANDS))
+    exit(1)
+
+try:
+    subprocess.run(["wlc", "--url", URL, "--key", KEY, "--format", "json", COMMAND, TRANSLATION],
+                   stdout=sys.stderr,
+                   check=True)
+except subprocess.CalledProcessError:
+    print("Could not execute the command on the weblate server")
+    exit(1)
+
+try:
+    TIMESTAMP = PAYLOAD["version"]["timestamp"]
+except KeyError:
+    TIMESTAMP = "none"
+
+
+print(json.dumps({'version':{"timestamp": TIMESTAMP}}, sort_keys=True, indent=2))
