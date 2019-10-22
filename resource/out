@@ -13,28 +13,29 @@ try:
     KEY = PAYLOAD["source"]["key"]
     TRANSLATION = PAYLOAD["source"]["translation"]
 except KeyError:
-    print("Please provide a url, key and translation for weblate resource")
+    sys.stderr.write("Please provide a url, key and translation for weblate resource")
     sys.exit(1)
 
 try:
     COMMAND = PAYLOAD["params"]["command"]
 except KeyError:
-    print("Please provide a command as a parameter")
+    sys.stderr.write("Please provide a command as a parameter")
     sys.exit(1)
 
 ALLOWED_COMMANDS = ["lock", "unlock", "cleanup", "pull", "push", "reset", "commit"]
 if COMMAND not in ALLOWED_COMMANDS:
-    print("Only the following actions are allowed: " + str(ALLOWED_COMMANDS))
+    sys.stderr.write("Only the following actions are allowed: " + str(ALLOWED_COMMANDS))
     sys.exit(1)
 
 try:
     subprocess.run(
         ["wlc", "--url", URL, "--key", KEY, "--format", "json", COMMAND, TRANSLATION],
         stdout=sys.stderr,
+        stderr=sys.stderr,
         check=True,
     )
 except subprocess.CalledProcessError:
-    print("Could not execute the command on the weblate server")
+    sys.stderr.write("Could not execute the command on the weblate server")
     sys.exit(1)
 
 try:
