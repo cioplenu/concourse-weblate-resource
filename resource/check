@@ -15,8 +15,8 @@ try:
     KEY = PAYLOAD["source"]["key"]
     TRANSLATION = PAYLOAD["source"]["translation"]
 except KeyError:
-    print("Please provide a url, key and translation for weblate resource")
-    exit(1)
+    sys.stderr.write("Please provide a url, key and translation for weblate resource")
+    sys.exit(1)
 
 try:
     TIMESTAMP = PAYLOAD["version"]["timestamp"]
@@ -26,4 +26,4 @@ except KeyError:
     TIMESTAMP = "none"
 
 
-print(json.dumps([{"timestamp":TIMESTAMP}], sort_keys=True, indent=2))
+print(json.dumps([{"timestamp": TIMESTAMP}], sort_keys=True, indent=2))

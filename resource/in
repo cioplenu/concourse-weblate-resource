@@ -10,8 +10,8 @@ import json
 PAYLOAD = json.loads(sys.stdin.read())
 
 try:
-    TIMESTAMP = PAYLOAD['version']['timestamp']
+    TIMESTAMP = PAYLOAD["version"]["timestamp"]
 except KeyError:
-    TIMESTAMP = 'none'
+    TIMESTAMP = "none"
 
-print(json.dumps({'version':{'timestamp': TIMESTAMP}}, sort_keys=True, indent=2))
+print(json.dumps({"version": {"timestamp": TIMESTAMP}}, sort_keys=True, indent=2))
